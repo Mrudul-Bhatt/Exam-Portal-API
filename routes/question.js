@@ -1,9 +1,10 @@
 const express = require('express');
 const Ques = require('../models/question');
+const Score = require('../models/scores');
 const requireLogin = require('../middleware/requireLogin');
 const router = express.Router();
 
-router.get('/allques', (req, res) => {
+router.get('/allques', requireLogin, (req, res) => {
 	Ques.find()
 		.then((myques) => res.json({ myques }))
 		.catch((error) => {
@@ -83,6 +84,26 @@ router.post('/createques', (req, res) => {
 		.save()
 		.then((createdQues) => {
 			res.json({ createdQues, message: 'Question added' });
+		})
+		.catch((error) => {
+			console.log(error);
+			res.status(500).json({ error: 'Server is down, try again later' });
+		});
+});
+
+router.post('/submit', requireLogin, (req, res) => {
+	const { name, email, score, start, end } = req.body;
+	const newScore = new Score({
+		name,
+		email,
+		score,
+		start,
+		end,
+	});
+	newScore
+		.save()
+		.then((value) => {
+			res.json({ value, message: 'Score added' });
 		})
 		.catch((error) => {
 			console.log(error);
