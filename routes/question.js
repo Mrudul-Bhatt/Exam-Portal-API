@@ -13,6 +13,15 @@ router.get('/allques', requireLogin, (req, res) => {
 		});
 });
 
+router.get('/allquesnoauth', (req, res) => {
+	Ques.find()
+		.then((myques) => res.json({ myques }))
+		.catch((error) => {
+			console.log(error);
+			res.status(500).json({ error: 'Server is down, try again later' });
+		});
+});
+
 router.delete('/deleteques', (req, res) => {
 	Ques.findOne({ _id: req.body.quesId }).exec((err, ques) => {
 		if (err || !ques) {
